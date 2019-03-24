@@ -17,6 +17,7 @@
 (require 'nyan-mode)
 (nyan-mode)
 
+;; Use-Package
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 (setq use-package-verbose t)
@@ -48,6 +49,10 @@
 ;; Sentences end with a single space
 (setq sentence-end-double-space nil)
 
+;; Whitespace mode
+(global-whitespace-mode 1)
+(setq whitespace-style (quote (face spaces tabs space-mark tab-mark)))
+
 ;; Autocomplete
 (use-package company
   :config (add-hook 'prog-mode-hook 'company-mode))
@@ -61,7 +66,9 @@
  '(custom-safe-themes
    (quote
     ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
- '(package-selected-packages (quote (company use-package spacemacs-theme auto-compile))))
+ '(package-selected-packages
+   (quote
+    (cmake-mode company use-package spacemacs-theme auto-compile))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -69,7 +76,7 @@
  ;; If there is more than one, they won't work right.
  '(line-number ((t (:inherit default :background "gray17" :foreground "MediumOrchid3")))))
  
-;; Display options
+;; Display and theme options
 (unless (package-installed-p 'spacemacs-theme)
   (package-install 'spacemacs-theme))
 (load-theme 'spacemacs-dark)
