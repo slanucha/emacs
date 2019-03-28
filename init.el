@@ -1,1 +1,0 @@
-C:/Users/slanu/Source/emacs/slann.el
