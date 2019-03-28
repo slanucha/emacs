@@ -12,6 +12,11 @@
 (unless (assoc-default "org" package-archives)
   (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t))
 
+;; Nyan Cat :3 
+(add-to-list 'load-path "~/.emacs.packages/nyan-mode")
+(require 'nyan-mode)
+(nyan-mode)
+
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 (setq use-package-verbose t)
