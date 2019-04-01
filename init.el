@@ -104,6 +104,64 @@
   :config
   (helm-projectile-toggle 1))
 
+;;;; RTags configuration
+;;;; From https://vxlabs.com/2016/04/11/step-by-step-guide-to-c-navigation-and-completion-with-emacs-and-the-clang-based-rtags/
+
+;; ensure that we use only rtags checking
+;; https://github.com/Andersbakken/rtags#optional-1
+(defun setup-flycheck-rtags ()
+  (interactive)
+  (flycheck-select-checker 'rtags)
+  ;; RTags creates more accurate overlays.
+  (setq-local flycheck-highlighting-mode nil)
+  (setq-local flycheck-check-syntax-automatically nil))
+
+;; only run this if rtags is installed
+(when (require 'rtags nil :noerror)
+  ;; make sure you have company-mode installed
+  (require 'company)
+  (define-key c-mode-base-map (kbd "M-.")
+    (function rtags-find-symbol-at-point))
+  (define-key c-mode-base-map (kbd "M-,")
+    (function rtags-find-references-at-point))
+  ;; disable prelude's use of C-c r, as this is the rtags keyboard prefix
+  ;;(define-key prelude-mode-map (kbd "C-c r") nil) ;; only for prelude
+  ;; install standard rtags keybindings. Do M-. on the symbol below to
+  ;; jump to definition and see the keybindings.
+  (rtags-enable-standard-keybindings)
+  ;; comment this out if you don't have or don't use helm
+  (setq rtags-use-helm t)
+  ;; company completion setup
+  (setq rtags-autostart-diagnostics t)
+  (rtags-diagnostics)
+  (setq rtags-completions-enabled t)
+  (push 'company-rtags company-backends)
+  (global-company-mode)
+  (define-key c-mode-base-map (kbd "<C-tab>") (function company-complete))
+  ;; use rtags flycheck mode -- clang warnings shown inline
+  (require 'flycheck-rtags)
+  ;; c-mode-common-hook is also called by c++-mode
+  (add-hook 'c-mode-common-hook #'setup-flycheck-rtags))
+
+;; Set RTags path and add server start hooks
+(setq rtags-path "~/rtags/bin")
+(add-hook 'c-mode-hook 'rtags-start-process-unless-running)
+(add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
+(add-hook 'objc-mode-hook 'rtags-start-process-unless-running)
+
+;; Usage Help
+;;
+;; Start rdm in the background
+;; rdm &
+;;
+;; Index the file test.c
+;; rc -c gcc -I... -fsomeflag -c test.c
+;;
+;; Add set(CMAKE_EXPORT_COMPILE_COMMANDS ON) to enable compile_commands.json generation by cmake
+;;
+;; Load the compilation commands JSON file
+;; rc -J /path/to/a/directory/containing/compile_commands.json
+
 ;;;; Custom variables
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -115,7 +173,7 @@
     ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(package-selected-packages
    (quote
-    (helm-ag cmake-mode company use-package spacemacs-theme auto-compile))))
+    (flycheck-rtags company-rtags rtags helm-ag cmake-mode company use-package spacemacs-theme auto-compile))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
