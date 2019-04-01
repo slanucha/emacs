@@ -44,6 +44,8 @@ flycheck_*.el
 
 # projectiles files
 .projectile
+projectile.cache
+projectile-bookmarks*
 
 # directory configuration
 .dir-locals.el
@@ -53,5 +55,6 @@ flycheck_*.el
 
 # History
 savehist
+recentf
 
 # End of https://www.gitignore.io/api/emacs
