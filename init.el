@@ -49,6 +49,9 @@
 ;;;; Sentences end with a single space
 (setq sentence-end-double-space nil)
 
+;;;; Disable tabs
+(setq-default indent-tabs-mode nil)
+
 ;;;; Whitespace mode
 (global-whitespace-mode 1)
 (setq whitespace-style (quote (face spaces tabs space-mark tab-mark)))
