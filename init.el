@@ -27,6 +27,9 @@
   :config (auto-compile-on-load-mode))
 (setq load-prefer-newer t)
 
+;;;; ZTree
+(use-package ztree)
+
 ;;;; Backups
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 
@@ -59,6 +62,47 @@
 ;;;; Autocomplete
 (use-package company
   :config (add-hook 'prog-mode-hook 'company-mode))
+
+;;;; Move Text
+(defun move-text-internal (arg)
+  (cond
+   ((and mark-active transient-mark-mode)
+    (if (> (point) (mark))
+        (exchange-point-and-mark))
+    (let ((column (current-column))
+          (text (delete-and-extract-region (point) (mark))))
+      (forward-line arg)
+      (move-to-column column t)
+      (set-mark (point))
+      (insert text)
+      (exchange-point-and-mark)
+      (setq deactivate-mark nil)))
+   (t
+    (let ((column (current-column)))
+      (beginning-of-line)
+      (when (or (> arg 0) (not (bobp)))
+        (forward-line)
+        (when (or (< arg 0) (not (eobp)))
+          (transpose-lines arg))
+        (forward-line -1))
+      (move-to-column column t)))))
+
+(defun move-text-down (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines down."
+  (interactive "*p")
+  (move-text-internal arg))
+
+(defun move-text-up (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines up."
+  (interactive "*p")
+  (move-text-internal (- arg)))
+
+(provide 'move-text)
+
+(global-set-key [M-up] 'move-text-up)
+(global-set-key [M-down] 'move-text-down)
 
 ;;;; Helm config
 (use-package helm
@@ -176,7 +220,7 @@
     ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(package-selected-packages
    (quote
-    (flycheck-rtags company-rtags rtags helm-ag cmake-mode company use-package spacemacs-theme auto-compile))))
+    (ztree move-text flycheck-rtags company-rtags rtags helm-ag cmake-mode company use-package spacemacs-theme auto-compile))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
